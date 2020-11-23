@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-39988758-2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-39988758-2');
+    </script>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/css/octicons.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mapbox-gl@1.13.0/dist/mapbox-gl.css" />
+    <title>Mapbox GL JS Animated Popup</title>
+    <meta name="description" content="An animated popup component for Mapbox GL JS" />
+    <meta property="og:title" content="Mapbox GL JS Animated Popup" />
+    <meta property="og:description" content="An animated popup component for Mapbox GL JS" />
+    <meta property="og:locale" content="en_US" />
+    <link rel="canonical" href="https://nagix.github.io/mapbox-gl-animated-popup" />
+    <meta property="og:url" content="https://nagix.github.io/mapbox-gl-animated-popup" />
+    <meta property="og:site_name" content="Mapbox GL JS Animated Popup" />
+    <meta property="og:image" content="https://nagix.github.io/mapbox-gl-animated-popup/screenshot1.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@nagix" />
+    <meta name="theme-color" content="#ffffff">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/js/bootstrap-select.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl@1.13.0/dist/mapbox-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl-animated-popup@0.1.0"></script>
+    <style>
+      #map-title {
+        width: 840px;
+        height: 200px;
+        margin: 30px auto 0 auto;
+      }
+      .popup-title {
+        font-size: 40px;
+        line-height: 55px;
+        text-align: center;
+        color: white;
+      }
+      .popup-title .mapboxgl-popup-content {
+        width: 60px;
+        height: 50px;
+        border-radius: 30px;
+        box-sizing: content-box;
+      }
+      .popup-title-1 .mapboxgl-popup-content {
+        background-color: #1f77b4;
+      }
+      .popup-title-1 .mapboxgl-popup-tip {
+        border-top-color: #1f77b4;
+      }
+      .popup-title-2 .mapboxgl-popup-content {
+        background-color: #ff7f0e;
+      }
+      .popup-title-2 .mapboxgl-popup-tip {
+        border-top-color: #ff7f0e;
+      }
+      .popup-title-3 .mapboxgl-popup-content {
+        background-color: #2ca02c;
+      }
+      .popup-title-3 .mapboxgl-popup-tip {
+        border-top-color: #2ca02c;
+      }
+      .popup-title-4 .mapboxgl-popup-content {
+        background-color: #d62728;
+      }
+      .popup-title-4 .mapboxgl-popup-tip {
+        border-top-color: #d62728;
+      }
+      .popup-title-5 .mapboxgl-popup-content {
+        background-color: #9467bd;
+      }
+      .popup-title-5 .mapboxgl-popup-tip {
+        border-top-color: #9467bd;
+      }
+      .tutorial-list>li:not(.question):after {
+        content: none;
+      }
+      .config-form {
+        margin: 30px 120px;
+        font-weight: 300;
+      }
+      .config-form>div:not(:last-child) {
+        border-right: 1px solid #ccc;
+      }
+      .config-form .row:first-child {
+        margin: 10px 30px;
+      }
+      .form-group.row {
+        margin: 10px 20px 10px 0;
+      }
+      .select-label {
+        line-height: 2.2;
+      }
+      .inner {
+        overscroll-behavior: contain;
+      }
+      .option-thumbnail {
+        vertical-align: middle
+      }
+      .option-text {
+        vertical-align: middle
+      }
+      path {
+        fill: none;
+        stroke: #000;
+        stroke-width: 4px;
+      }
+      .shell {
+        font-size: 14px;
+        line-height: 18px;
+      }
+      #map-body {
+        width: 700px;
+        height: 300px;
+        margin: auto;
+        text-align: left;
+      }
+      #marker {
+        background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/washington-monument.jpg');
+        background-size: cover;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <section id="hero-spot" class="hero-spot">
+      <h1>Mapbox GL JS Animated Popup</h1>
+      <h2><a href="https://github.com/nagix/mapbox-gl-animated-popup">GitHub</a></h2>
+    </section>
+    <section id="tutorial" class="tutorial">
+      <h2>An animated popup component for <a href="https://github.com/mapbox/mapbox-gl-js">Mapbox GL JS</a>.</h2>
+
+      <div id="map-title"></div>
+
+      <ul id="plain-js" class="tutorial-list wrapper active">
+
+        <li>
+          <p>You can use the AnimatedPopup class, which extends Mapbox's<br><a href="https://docs.mapbox.com/mapbox-gl-js/api/markers/#popup">Popup</a> class and supports a few options controlling popup animations.</p>
+          <div class="row config-form">
+            <div class="col-6">
+              <div class="row">
+                <div class="col-12">
+                  Opening animation
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-form-label col-4 select-label" for="opening-animation-easing">easing</label>
+                <select id="opening-animation-easing" class="col-8 form-control selectpicker" data-style="btn-outline-primary"></select>
+              </div>
+              <div class="form-group row">
+                <label class="col-form-label col-4" for="opening-animation-duration">duration</label>
+                <input id="opening-animation-duration" class="col-8 form-control" type="text" value="1000">
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="row">
+                <div class="col-12">
+                  Closing animation
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-form-label col-4 select-label" for="closing-animation-easing">easing</label>
+                <select id="closing-animation-easing" class="col-8 form-control selectpicker" data-style="btn-outline-primary"></select>
+              </div>
+              <div class="form-group row">
+                <label class="col-form-label col-4" for="closing-animation-duration">duration</label>
+                <input id="closing-animation-duration" class="col-8 form-control" type="text" value="300">
+              </div>
+            </div>
+          </div>
+          <div id="map-body"></div>
+          <div class="terminal">
+            <div class="header"></div>
+            <div class="shell">
+              &lt;!DOCTYPE html&gt;<br>
+              &lt;html&gt;<br>
+              &lt;head&gt;<br>
+              &lt;meta charset="utf-8" /&gt;<br>
+              &lt;title&gt;Attach a popup to a marker instance&lt;/title&gt;<br>
+              &lt;meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" /&gt;<br>
+              &lt;script src="https://api.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.js"&gt;&lt;/script&gt;<br>
+              &lt;script src="https://cdn.jsdelivr.net/npm/mapbox-gl-animated-popup@v0.1.0/dist/mapbox-gl-animated-popup.min.js"&gt;&lt;/script&gt;<br>
+              &lt;link href="https://api.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.css" rel="stylesheet" /&gt;<br>
+              &lt;style&gt;<br>
+              &nbsp;&nbsp;body { margin: 0; padding: 0; }<br>
+              &nbsp;&nbsp;#map { position: absolute; top: 0; bottom: 0; width: 100%; }<br>
+              &lt;/style&gt;<br>
+              &lt;/head&gt;<br>
+              &lt;body&gt;<br>
+              &lt;style&gt;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;#marker {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background-image: url('https://docs.mapbox.com/mapbox-gl-js/assets/washington-monument.jpg');<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background-size: cover;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width: 50px;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height: 50px;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border-radius: 50%;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor: pointer;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;.mapboxgl-popup {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 200px;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+              &lt;/style&gt;<br>
+              <br>
+              &lt;div id="map"&gt;&lt;/div&gt;<br>
+              <br>
+              &lt;script&gt;<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;mapboxgl.accessToken = 'pk.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxxx';<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;var monument = [-77.0353, 38.8895];<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;var map = new mapboxgl.Map({<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;container: 'map',<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;style: 'mapbox://styles/mapbox/light-v10',<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;center: monument,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zoom: 15<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;});<br>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;// create the popup<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;var popup = new AnimatedPopup({<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offset: 25,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;openingAnimation: {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;duration: <span id="opening-animation-duration-text">1000</span>,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easing: '<span id="opening-animation-easing-text">easeOutElastic</span>'<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;closingAnimation: {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;duration: <span id="closing-animation-duration-text">300</span>,<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easing: '<span id="closing-animation-easing-text">easeInBack</span>'<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;}).setText(<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Construction on the Washington Monument began in 1848.'<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;);<br>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;// create DOM element for the marker<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;var el = document.createElement('div');<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;el.id = 'marker';<br>
+              <br>
+              &nbsp;&nbsp;&nbsp;&nbsp;// create the marker<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;new mapboxgl.Marker(el)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.setLngLat(monument)<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.setPopup(popup) // sets a popup on this marker<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.addTo(map);<br>
+              &lt;/script&gt;<br>
+              <br>
+              &lt;/body&gt;<br>
+              &lt;/html&gt;<br>
+            </div>
+          </div>
+        </li>
+
+      </ul>
+
+    </section>
+    <script>
+      mapboxgl.accessToken = 'pk.eyJ1IjoibmFnaXgiLCJhIjoiY2toNjZiODloMDkwczJwbnpqZDJsb3dlYiJ9.H8NBOYo-3mej8W-oQzGmDw';
+      const mapTitle = new mapboxgl.Map({
+        container: `map-title`,
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: [0, 30],
+        zoom: 1,
+        interactive: false
+      });
+      const showTitle = () => {
+        "POPUP".split('').forEach((text, i) => {
+          let popup;
+          setTimeout(() => {
+            popup = new AnimatedPopup({
+              closeButton: false,
+              closeOnClick: false,
+              className: `popup-title popup-title-${i + 1}`,
+              openingAnimation: {
+                duration: 1000,
+                easing: 'easeOutElastic'
+              },
+              closingAnimation: {
+                duration: 300,
+                easing: 'easeInBack'
+              }
+            })
+              .setLngLat([(i - 2) * 50, 20 -(i % 2) * 10])
+              .setText(text)
+              .addTo(mapTitle);
+          }, i * 100 + 1000);
+          setTimeout(() => {
+            popup.remove();
+          }, 4000);
+        });
+      };
+      mapTitle.on('load', () => {
+        showTitle();
+        setInterval(showTitle, 5000);
+      });
+
+      const whiteList = $.fn.selectpicker.Constructor.DEFAULTS.whiteList;
+      whiteList.svg = ['xmlns', 'viewbox', 'width', 'height'];
+      whiteList.path = ['d', 'transform'];
+
+      const easingFunctions = {
+        'linear': 'M1 84L124 1',
+        'easeInSine': 'M1 84c14 1 47.75 1 123-83',
+        'easeOutSine': 'M1 84C76.25 0 110 0 124 1',
+        'easeInOutSine': 'M1 84C46.25 85 78.75 0 124 1',
+        'easeInQuad': 'M1 84c12.75 1 61.5 1 123-83',
+        'easeOutQuad': 'M1 84C62.5 0 111.25 0 124 1',
+        'easeInOutQuad': 'M1 84C56.25 85 68.75 0 124 1',
+        'easeInCubic': 'M1 84c39 1 82.75 1 123-83',
+        'easeOutCubic': 'M1 84C41.25 0 85 0 124 1',
+        'easeInOutCubic': 'M1 84C81.25 85 43.75 0 124 1',
+        'easeInQuart': 'M1 84c61.5 1 92.75 1 123-83',
+        'easeOutQuart': 'M1 84C31.25 0 62.5 0 124 1',
+        'easeInOutQuart': 'M1 84C95 85 30 0 124 1',
+        'easeInQuint': 'M1 84c79 1 96.5 1 123-83',
+        'easeOutQuint': 'M1 84C27.5 0 45 0 124 1',
+        'easeInOutQuint': 'M1 84C103.75 85 21.25 0 124 1',
+        'easeInExpo': 'M1 84c86.5 1 104 1 123-83',
+        'easeOutExpo': 'M1 84C20 0 37.5 0 124 1',
+        'easeInOutExpo': 'M1 84C108.75 85 16.25 0 124 1',
+        'easeInCirc': 'M1 84c67.75 1 124-37.25 123-83',
+        'easeOutCirc': 'M1 84C0 38.25 56.25 0 124 1',
+        'easeInOutCirc': 'M1 84C106.25 85 18.75 0 124 1',
+        'easeInBack': 'M1 84c44 1 81.5 48.6 123-83',
+        'easeOutBack': 'M1 84C42.5-47.6 80 0 124 1',
+        'easeInOutBack': 'M1 84C85 136 40-51 124 1',
+        'easeInElastic': 'M1 84l.24.03 1.24-.02 1.24-.02 1.24-.02 1.24-.03 1.24-.02 1.24-.03 1.24-.02 1.24-.02 1.24-.01 1.24-.01h1.24l1.24.01 1.24.02 1.24.02 1.24.04 1.24.05 1.24.06 1.24.06 1.24.07 1.24.08 1.24.06 1.24.07 1.24.05 1.24.04 1.24.03h1.24l1.24-.03 1.24-.05 1.24-.08 1.24-.11 1.24-.14 1.24-.16 1.24-.19 1.24-.19 1.24-.21 1.24-.19 1.24-.18 1.24-.16 1.24-.11 1.24-.07h1.24l1.24.07 1.24.15 1.24.23 1.24.32 1.24.39 1.24.46 1.24.52 1.24.55 1.24.57 1.24.56 1.24.51 1.24.44 1.24.32 1.24.18 1.24.01 1.24-.2 1.24-.42 1.24-.66 1.24-.88 1.24-1.11 1.24-1.31 1.24-1.46 1.24-1.57 1.24-1.61 1.24-1.58 1.24-1.45 1.24-1.23 1.24-.92 1.24-.51 1.24-.01 1.24.56 1.24 1.19L93 76.58l1.24 2.5 1.24 3.14 1.24 3.69 1.24 4.14 1.24 4.45 1.24 4.56 1.24 4.46 1.24 4.1 1.24 3.48 1.24 2.6 1.24 1.43 1.24.04 1.24-1.59 1.24-3.36 1.24-5.22 1.24-7.09 1.24-8.87 1.24-10.44 1.24-11.73 1.24-12.57 1.24-12.9 1.24-12.6 1.24-11.6 1.24-9.86',
+        'easeOutElastic': 'M1 84l.24-7.34 1.24-9.86 1.24-11.6 1.24-12.6L6.2 29.7l1.24-12.57L8.68 5.4 9.92-5.04l1.24-8.87L12.4-21l1.24-5.22 1.24-3.36 1.24-1.59 1.24.04 1.24 1.43 1.24 2.6 1.24 3.48 1.24 4.1 1.24 4.46 1.24 4.56 1.24 4.45 1.24 4.14 1.24 3.69 1.24 3.14L31 7.42l1.24 1.85 1.24 1.19 1.24.56 1.24-.01 1.24-.51 1.24-.92 1.24-1.23 1.24-1.45 1.24-1.58 1.24-1.61 1.24-1.57L45.88.68l1.24-1.31 1.24-1.11 1.24-.89 1.24-.65 1.24-.42 1.24-.2 1.24.01 1.24.18 1.24.32 1.24.44 1.24.51 1.24.56 1.24.57 1.24.55 1.24.52 1.24.46 1.24.39 1.24.32 1.24.23 1.24.15 1.24.07h1.24l1.24-.07 1.24-.11 1.24-.16 1.24-.18 1.24-.19L80.6.46l1.24-.19 1.24-.19 1.24-.16 1.24-.14 1.24-.11 1.24-.08 1.24-.05 1.24-.03h1.24L93-.46l1.24.04 1.24.05 1.24.07 1.24.06 1.24.08 1.24.07 1.24.06 1.24.06 1.24.05 1.24.04 1.24.02 1.24.02 1.24.01h1.24l1.24-.01 1.24-.01 1.24-.02 1.24-.02 1.24-.03 1.24-.02 1.24-.03 1.24-.02 1.24-.02 1.24-.02',
+        'easeInOutElastic': 'M1 84l.24-.02 1.24-.02 1.24-.01 1.24-.02 1.24-.01 1.24-.01h1.24l1.24.01 1.24.02 1.24.03 1.24.05 1.24.06 1.24.07 1.24.08 1.24.08 1.24.07 1.24.04 1.24.02 1.24-.03 1.24-.08 1.24-.15 1.24-.21 1.24-.28 1.24-.33 1.24-.37 1.24-.37 1.24-.33 1.24-.26 1.24-.12 1.24.08 1.24.32 1.24.62 1.24.93 1.24 1.25 1.24 1.52 1.24 1.71 1.24 1.78 1.24 1.66 1.24 1.34 1.24.75 1.24-.11 1.24-1.23 1.24-2.57 1.24-4.05 1.24-5.56 1.24-6.92 1.24-7.97 1.24-8.45 1.24-8.16L62 42l1.24-6.85 1.24-8.16 1.24-8.45 1.24-7.97 1.24-6.92 1.24-5.56 1.24-4.05 1.24-2.57 1.24-1.23 1.24-.11 1.24.75 1.24 1.34 1.24 1.66 1.24 1.78 1.24 1.72 1.24 1.51L83.08.14l1.24.93 1.24.62 1.24.32 1.24.08 1.24-.12 1.24-.26 1.24-.33L93 1.01l1.24-.37 1.24-.33 1.24-.28 1.24-.21 1.24-.15 1.24-.08 1.24-.03 1.24.02 1.24.04 1.24.07 1.24.08 1.24.08 1.24.07 1.24.06 1.24.05 1.24.03 1.24.02 1.24.01h1.24l1.24-.01 1.24-.01 1.24-.02 1.24-.01 1.24-.02',
+        'easeInBounce': 'M1 84l.24-.51 1.24-.39 1.24-.26 1.24-.13 1.24-.01 1.24.12 1.24.25 1.24.38 1.24.5L12.4 83l1.24-.97 1.24-.85 1.24-.72 1.24-.6 1.24-.47 1.24-.34 1.24-.21 1.24-.09 1.24.04 1.24.17 1.24.29 1.24.43 1.24.54 1.24.68 1.24.8 1.24.93 1.24 1.06 1.24-1.34 1.24-2.15 1.24-2.03 1.24-1.9 1.24-1.77 1.24-1.65 1.24-1.52 1.24-1.39 1.24-1.26 1.24-1.14 1.24-1.01 1.24-.88 1.24-.76 1.24-.63 1.24-.5 1.24-.38 1.24-.25 1.24-.12 1.24.01 1.24.13 1.24.26 1.24.39 1.24.51 1.24.64 1.24.77 1.24.9 1.24 1.02 1.24 1.15 1.24 1.27 1.24 1.41L71.92 73l1.24 1.66 1.24 1.78 1.24 1.91 1.24 2.04 1.24 2.17 1.24-.23 1.24-4.51 1.24-4.39 1.24-4.25 1.24-4.13 1.24-4 1.24-3.88 1.24-3.75 1.24-3.62 1.24-3.49 1.24-3.37L93 39.7l1.24-3.11 1.24-2.99 1.24-2.85 1.24-2.74 1.24-2.6 1.24-2.48 1.24-2.35 1.24-2.22 1.24-2.1 1.24-1.97 1.24-1.84 1.24-1.71 1.24-1.59 1.24-1.46 1.24-1.34 1.24-1.2 1.24-1.08 1.24-.96 1.24-.82 1.24-.7 1.24-.57 1.24-.45 1.24-.32 1.24-.19',
+        'easeOutBounce': 'M1 84l.24-.06 1.24-.19 1.24-.32 1.24-.45 1.24-.57 1.24-.7 1.24-.82 1.24-.96 1.24-1.08 1.24-1.2 1.24-1.34 1.24-1.46 1.24-1.59 1.24-1.71 1.24-1.84 1.24-1.97 1.24-2.1 1.24-2.22 1.24-2.35 1.24-2.48 1.24-2.6 1.24-2.74 1.24-2.85 1.24-2.99L31 44.3l1.24-3.24 1.24-3.37 1.24-3.49 1.24-3.62 1.24-3.75 1.24-3.88 1.24-4 1.24-4.13 1.24-4.25 1.24-4.39 1.24-4.51 1.24-.23 1.24 2.17 1.24 2.04 1.24 1.91 1.24 1.78L52.08 11l1.24 1.53 1.24 1.41 1.24 1.27 1.24 1.15 1.24 1.02 1.24.9 1.24.77 1.24.64 1.24.51 1.24.39 1.24.26 1.24.13 1.24.01 1.24-.12 1.24-.25 1.24-.38 1.24-.5 1.24-.63 1.24-.76 1.24-.88 1.24-1.01 1.24-1.14 1.24-1.26 1.24-1.39 1.24-1.52 1.24-1.65 1.24-1.77 1.24-1.9 1.24-2.03 1.24-2.15L90.52.31l1.24 1.06L93 2.3l1.24.8 1.24.68 1.24.54 1.24.43 1.24.29 1.24.17 1.24.04 1.24-.09 1.24-.21 1.24-.34 1.24-.47 1.24-.6 1.24-.72 1.24-.85L111.6 1l1.24-.95 1.24.5 1.24.38 1.24.25 1.24.12 1.24-.01 1.24-.13 1.24-.26 1.24-.39',
+        'easeInOutBounce': 'M1 84l.24-.45 1.24-.2 1.24.06 1.24.31 1.24-.22 1.24-.91 1.24-.66 1.24-.4 1.24-.15 1.24.1 1.24.36 1.24.61 1.24.87 1.24-.14 1.24-2.09 1.24-1.84 1.24-1.58 1.24-1.33 1.24-1.07 1.24-.83 1.24-.56 1.24-.31 1.24-.06 1.24.2 1.24.45 1.24.7 1.24.96 1.24 1.21 1.24 1.47 1.24 1.72 1.24 1.98 1.24.96 1.24-4.44 1.24-4.2 1.24-3.93 1.24-3.69 1.24-3.43 1.24-3.17 1.24-2.93 1.24-2.67 1.24-2.41 1.24-2.16 1.24-1.9 1.24-1.66 1.24-1.39 1.24-1.15 1.24-.89 1.24-.63 1.24-.38L62 42l1.24-.13 1.24-.38 1.24-.63 1.24-.89 1.24-1.15 1.24-1.39 1.24-1.66 1.24-1.9 1.24-2.16 1.24-2.42 1.24-2.66 1.24-2.93 1.24-3.17 1.24-3.43 1.24-3.69 1.24-3.93 1.24-4.2L84.32.84l1.24.96 1.24 1.98 1.24 1.72 1.24 1.47 1.24 1.21 1.24.96 1.24.7 1.24.45 1.24.2 1.24-.06 1.24-.31 1.24-.57 1.24-.82 1.24-1.07 1.24-1.33 1.24-1.58 1.24-1.84 1.24-2.09 1.24-.14 1.24.87 1.24.61 1.24.36 1.24.1 1.24-.15 1.24-.4 1.24-.66L117.8.5l1.24-.22 1.24.31 1.24.06 1.24-.2'
+      };
+      let popup;
+      let openingAnimationDuration = 1000;
+      let openingAnimationEasing = 'easeOutElastic';
+      let closingAnimationDuration = 300;
+      let closingAnimationEasing = 'easeInBack';
+      const openingAnimationDurationElement = document.getElementById('opening-animation-duration');
+      const openingAnimationEasingElement = document.getElementById('opening-animation-easing');
+      const closingAnimationDurationElement = document.getElementById('closing-animation-duration');
+      const closingAnimationEasingElement = document.getElementById('closing-animation-easing');
+      for (const name of Object.keys(easingFunctions)) {
+        let element = document.createElement('option');
+        element.value = element.text = name;
+        element.setAttribute('data-content', `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -35 125 152' width='42' height='42'><path d='${easingFunctions[name]}'></path></svg><span class='option-text'>${name}</span>`);
+        if (name === openingAnimationEasing) {
+          element.selected = true;
+        }
+        openingAnimationEasingElement.appendChild(element);
+        element = document.createElement('option');
+        element.value = element.text = name;
+        element.setAttribute('data-content', `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 -118 125 152' width='42' height='42'><path d='${easingFunctions[name]}' transform='scale(1,-1)'></path></svg><span class='option-text'>${name}</span>`);
+        if (name === closingAnimationEasing) {
+          element.selected = true;
+        }
+        closingAnimationEasingElement.appendChild(element);
+      }
+      const refresh = () => {
+        if (popup && popup.isOpen()) {
+          popup.remove();
+        }
+        popup = new AnimatedPopup({
+          offset: 25,
+          openingAnimation: {
+            duration: openingAnimationDuration,
+            easing: openingAnimationEasing
+          },
+          closingAnimation: {
+            duration: closingAnimationDuration,
+            easing: closingAnimationEasing
+          }
+        }).setText('Construction on the Washington Monument began in 1848.');
+        const element = document.createElement('div');
+          element.id = 'marker';
+        new mapboxgl.Marker(element)
+              .setLngLat(monument)
+              .setPopup(popup)
+              .addTo(map);
+      }
+      openingAnimationDurationElement.addEventListener('input', () => {
+        openingAnimationDuration = +openingAnimationDurationElement.value || 0;
+        document.getElementById('opening-animation-duration-text').innerHTML = openingAnimationDuration;
+        refresh();
+      });
+      openingAnimationEasingElement.addEventListener('change', () => {
+        openingAnimationEasing = openingAnimationEasingElement.value;
+        document.getElementById('opening-animation-easing-text').innerHTML = openingAnimationEasing;
+        refresh();
+      });
+      closingAnimationDurationElement.addEventListener('input', () => {
+        closingAnimationDuration = +closingAnimationDurationElement.value || 0;
+        document.getElementById('closing-animation-duration-text').innerHTML = closingAnimationDuration;
+        refresh();
+      });
+      closingAnimationEasingElement.addEventListener('change', () => {
+        closingAnimationEasing = closingAnimationEasingElement.value;
+        document.getElementById('closing-animation-easing-text').innerHTML = closingAnimationEasing;
+        refresh();
+      });
+
+      const monument = [-77.0353, 38.8895];
+      const map = new mapboxgl.Map({
+        container: `map-body`,
+        style: 'mapbox://styles/mapbox/light-v10',
+        center: monument,
+        zoom: 15
+      });
+      refresh();
+    </script>
+    <footer class="page-footer">
+      <ul class="site-footer-links right">
+        <li><a href="https://github.com/nagix"><i class="fa fa-github-square fa-2x" style="color: #999;"></i></a></li>
+        <li><a href="https://twitter.com/nagix"><i class="fa fa-twitter-square fa-2x" style="color: #999;"></i></a></li>
+        <li><a href="https://www.linkedin.com/in/akihiko-kusanagi"><i class="fa fa-linkedin-square fa-2x" style="color: #999;"></i></a></li>
+      </ul>
+      <a href="/">
+        <img src="/favicon-32x32-glay.png" style="position: absolute; top: 34px; left: 50%; margin-left: -16px;">
+      </a>
+      <ul class="site-footer-links">
+        <li>&copy; 2020 Akihiko Kusanagi</li>
+      </ul>
+    </footer>
+  </body>
+</html>
