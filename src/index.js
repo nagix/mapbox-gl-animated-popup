@@ -228,8 +228,13 @@ const effects = {
 };
 
 function animate(style, ease, duration, reverse, complete) {
+    let cancel;
     const start = performance.now();
     const repeat = () => {
+        if (cancel) {
+            return;
+        }
+
         const elapsed = performance.now() - start;
         const t = duration === 0 ? 1 : Math.min(elapsed / duration, 1);
         const value = effects[ease](t);
@@ -244,6 +249,11 @@ function animate(style, ease, duration, reverse, complete) {
     };
 
     repeat();
+
+    // Returns the cancel function
+    return () => {
+        cancel = true;
+    };
 }
 
 function extend(dest, ...sources) {
@@ -339,6 +349,10 @@ export default class AnimatedPopup extends mapboxgl.Popup {
     _remove() {
         const wrapperContainer = this._container;
 
+        if (this._cancelAnimation) {
+            this._cancelAnimation();
+        }
+
         if (wrapperContainer.parentNode) {
             wrapperContainer.parentNode.removeChild(wrapperContainer);
         }
@@ -358,12 +372,14 @@ export default class AnimatedPopup extends mapboxgl.Popup {
         if (innerContainer) {
             const {easing, duration} = this.options.closingAnimation;
 
-            animate(innerContainer.style, easing, duration, true, () => {
+            if (this._cancelAnimation) {
+                this._cancelAnimation();
+            }
+            this._cancelAnimation = animate(innerContainer.style, easing, duration, true, () => {
                 // When the animation completes, the popup is fully removed
                 this._remove();
                 delete this._removing;
             });
-            this._removing = true;
         } else {
             super.remove();
         }
@@ -452,7 +468,7 @@ export default class AnimatedPopup extends mapboxgl.Popup {
             this._map.getContainer().appendChild(wrapperContainer);
             wrapperContainer.appendChild(this._container);
 
-            animate(this._container.style, easing, duration);
+            this._cancelAnimation = animate(this._container.style, easing, duration);
         }
 
         // Restore the wrapper container
