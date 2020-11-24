@@ -1,4 +1,6 @@
 import fs from 'fs';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import {terser} from 'rollup-plugin-terser';
 import strip from '@rollup/plugin-strip';
 
@@ -18,9 +20,16 @@ export default [{
 		format: 'umd',
 		indent: false,
 		sourcemap: true,
-		banner
+		banner,
+		globals: {
+			'mapbox-gl': 'mapboxgl'
+		}
 	},
-	external: ['mapboxgl']
+	plugins: [
+		resolve(),
+		commonjs()
+	],
+	external: ['mapbox-gl']
 }, {
 	input: 'src/index.js',
 	output: {
@@ -29,10 +38,14 @@ export default [{
 		format: 'umd',
 		indent: false,
 		sourcemap: true,
-		banner
+		banner,
+		globals: {
+			'mapbox-gl': 'mapboxgl'
+		}
 	},
-	external: ['mapboxgl'],
 	plugins: [
+		resolve(),
+		commonjs(),
 		terser({
 			compress: {
 				pure_getters: true,
@@ -42,5 +55,6 @@ export default [{
 		strip({
 			sourceMap: true
 		})
-	]
+	],
+	external: ['mapbox-gl']
 }];

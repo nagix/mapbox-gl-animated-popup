@@ -1,4 +1,4 @@
-/*global mapboxgl*/
+import mapboxgl from 'mapbox-gl';
 
 const effects = {
     linear(t) {
