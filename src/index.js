@@ -462,6 +462,8 @@ export default class AnimatedPopup extends mapboxgl.Popup {
             wrapperContainer = document.createElement('div');
             wrapperContainer.className = 'mapboxgl-popup-wrapper';
             wrapperContainer.style.position = 'absolute';
+            wrapperContainer.style.willChange = 'transform';
+            wrapperContainer.style.pointerEvents = 'none';
             wrapperContainer.style.transform = this._container.style.transform;
             this._container.style.position = 'relative';
             this._container.style.transform = 'scale(0)';
