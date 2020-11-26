@@ -259,7 +259,10 @@ function animate(style, ease, duration, reverse, complete) {
 function extend(dest, ...sources) {
     for (const src of sources) {
         for (const k in src) {
-            if (typeof dest[k] === 'object' && typeof src[k] === 'object') {
+            if (typeof src[k] === 'object') {
+                if (!dest[k]) {
+                    dest[k] = {};
+                }
                 extend(dest[k], src[k]);
             } else {
                 dest[k] = src[k];
