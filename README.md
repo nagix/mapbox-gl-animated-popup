@@ -4,7 +4,7 @@
 
 ![Screenshot](https://nagix.github.io/mapbox-gl-animated-popup/mapbox-gl-animated-popup.gif)
 
-Version 0.1 requires Mapbox GL JS 0.48.0 or later. This component works on [browsers that support ES6](https://caniuse.com/es6).
+Version 0.2 requires Mapbox GL JS 0.48.0 or later. This component works on [browsers that support ES6](https://caniuse.com/es6).
 
 ## Installation
 

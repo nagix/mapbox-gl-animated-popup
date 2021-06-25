@@ -8,7 +8,7 @@ const pkg = JSON.parse(fs.readFileSync('package.json'));
 const banner = `/*!
  * Mapbox GL JS Animated Popup v${pkg.version}
  * ${pkg.homepage}
- * (c) ${new Date().getFullYear()} ${pkg.author}
+ * (c) 2020-${new Date().getFullYear()} ${pkg.author}
  * Released under the ${pkg.license} license
  */`;
 
