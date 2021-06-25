@@ -366,10 +366,10 @@ export default class AnimatedPopup extends Popup {
             return;
         }
 
+        const _requestDomTask = this._map._requestDomTask;
         let wrapperContainer = this._wrapperContainer;
         let innerContainer = this._container;
-        const transform = innerContainer ? innerContainer.style.transform : 'scale(0)';
-        const _requestDomTask = this._map._requestDomTask;
+        let transform;
 
         // If a container is assigned, create its wrapper container
         Object.defineProperty(this, '_container', {
@@ -398,6 +398,8 @@ export default class AnimatedPopup extends Popup {
             // Extend _requestDomTask to handle transform changes
             this._map._requestDomTask = fn => {
                 _requestDomTask.call(this._map, () => {
+                    transform = innerContainer ? innerContainer.style.transform : 'scale(0)';
+
                     fn();
 
                     // Apply transform to wrapper
@@ -408,6 +410,8 @@ export default class AnimatedPopup extends Popup {
                     innerContainer.style.transformOrigin = getOriginFromClassList(innerContainer.classList);
                 });
             };
+        } else {
+            transform = innerContainer ? innerContainer.style.transform : 'scale(0)';
         }
 
         super._update(...args);
