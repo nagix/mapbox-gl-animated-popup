@@ -1,4 +1,4 @@
-import {Popup} from 'mapbox-gl';
+import {Popup, version as mapboxVersion} from 'mapbox-gl';
 
 const effects = {
     linear(t) {
@@ -368,54 +368,64 @@ export default class AnimatedPopup extends Popup {
 
         let wrapperContainer = this._wrapperContainer;
         let innerContainer = this._container;
+        const transform = innerContainer ? innerContainer.style.transform : 'scale(0)';
+        const _requestDomTask = this._map._requestDomTask;
 
-        if (wrapperContainer) {
-            const style = innerContainer.style;
-            let maxWidthRead = false;
+        // If a container is assigned, create its wrapper container
+        Object.defineProperty(this, '_container', {
+            configurable: true,
+            get: () => innerContainer,
+            set: container => {
+                const {easing, duration} = this.options.openingAnimation;
 
-            // Use the style of the wrapper container to set the transform property
-            Object.defineProperty(innerContainer, 'style', {
-                configurable: true,
-                get: () => {
-                    if (!this.options.maxWidth || maxWidthRead && this.options.maxWidth === style.maxWidth) {
-                        return wrapperContainer.style;
-                    } else {
-                        maxWidthRead = true;
-                        return style;
-                    }
-                }
-            });
+                wrapperContainer = this._wrapperContainer = document.createElement('div');
+                wrapperContainer.className = 'mapboxgl-popup-wrapper';
+                wrapperContainer.style.position = 'absolute';
+                wrapperContainer.style.willChange = 'transform';
+                wrapperContainer.style.pointerEvents = 'none';
+
+                innerContainer = container;
+                innerContainer.style.position = 'relative';
+
+                this._map.getContainer().appendChild(wrapperContainer);
+                wrapperContainer.appendChild(innerContainer);
+
+                this._cancelAnimation = animate(innerContainer.style, easing, duration);
+            }
+        });
+
+        if (mapboxVersion >= '2.3') {
+            // Extend _requestDomTask to handle transform changes
+            this._map._requestDomTask = fn => {
+                _requestDomTask.call(this._map, () => {
+                    fn();
+
+                    // Apply transform to wrapper
+                    wrapperContainer.style.transform = innerContainer.style.transform;
+                    innerContainer.style.transform = transform;
+
+                    // Set the transform-origin property based on the anchor position
+                    innerContainer.style.transformOrigin = getOriginFromClassList(innerContainer.classList);
+                });
+            };
         }
 
         super._update(...args);
 
-        if (wrapperContainer) {
-            // Revert to the original style
-            delete innerContainer.style;
+        delete this._container;
+        this._container = innerContainer;
+
+        if (mapboxVersion >= '2.3') {
+            // Revert _requestDomTask
+            this._map._requestDomTask = _requestDomTask;
         } else {
-            const {easing, duration} = this.options.openingAnimation;
-
-            // If a container was newly created, create its wrapper container
-            wrapperContainer = this._wrapperContainer = document.createElement('div');
-            innerContainer = this._container;
-
-            wrapperContainer.className = 'mapboxgl-popup-wrapper';
-            wrapperContainer.style.position = 'absolute';
-            wrapperContainer.style.willChange = 'transform';
-            wrapperContainer.style.pointerEvents = 'none';
+            // Apply transform to wrapper
             wrapperContainer.style.transform = innerContainer.style.transform;
+            innerContainer.style.transform = transform;
 
-            innerContainer.style.position = 'relative';
-            innerContainer.style.transform = 'scale(0)';
-
-            this._map.getContainer().appendChild(wrapperContainer);
-            wrapperContainer.appendChild(innerContainer);
-
-            this._cancelAnimation = animate(innerContainer.style, easing, duration);
+            // Set the transform-origin property based on the anchor position
+            innerContainer.style.transformOrigin = getOriginFromClassList(innerContainer.classList);
         }
-
-        // Set the transform-origin property based on the anchor position
-        this._container.style.transformOrigin = getOriginFromClassList(this._container.classList);
     }
 
 }
