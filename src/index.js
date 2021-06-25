@@ -1,4 +1,4 @@
-import mapboxgl from 'mapbox-gl';
+import {Popup} from 'mapbox-gl';
 
 const effects = {
     linear(t) {
@@ -310,34 +310,11 @@ const defaultOptions = {
  * @param {Object} [options.closingAnimation.easing='easeInBack'] - The easing function
  *   name of the animation. See https://easings.net
  */
-export default class AnimatedPopup extends mapboxgl.Popup {
+export default class AnimatedPopup extends Popup {
 
     constructor(options) {
         super(options);
         extend(this.options, extend({}, defaultOptions, options));
-    }
-
-    _call(fn, ...args) {
-        const wrapperContainer = this._container;
-
-        if (wrapperContainer) {
-            // Use the classList of the internal container
-            Object.defineProperty(wrapperContainer, 'classList', {
-                configurable: true,
-                get: () => {
-                    return this._innerContainer.classList;
-                }
-            });
-        }
-
-        super[fn](...args);
-
-        if (wrapperContainer) {
-            // Revert to the original classList
-            delete wrapperContainer.classList;
-        }
-
-        return this;
     }
 
     addTo(...args) {
@@ -346,82 +323,40 @@ export default class AnimatedPopup extends mapboxgl.Popup {
             this._remove();
         }
 
-        return this._call('addTo', ...args);
+        return super.addTo(...args);
     }
 
     _remove() {
-        const wrapperContainer = this._container;
+        const wrapperContainer = this._wrapperContainer;
 
         if (this._cancelAnimation) {
             this._cancelAnimation();
         }
 
-        if (wrapperContainer.parentNode) {
+        if (wrapperContainer && wrapperContainer.parentNode) {
             wrapperContainer.parentNode.removeChild(wrapperContainer);
+            delete this._wrapperContainer;
         }
-        this._container = this._innerContainer;
-        delete this._innerContainer;
 
         super.remove();
     }
 
     remove() {
-        if (this._removing) {
-            return this;
-        }
-
-        const innerContainer = this._innerContainer;
-
-        if (innerContainer) {
+        if (this._wrapperContainer) {
             const {easing, duration} = this.options.closingAnimation;
 
             if (this._cancelAnimation) {
                 this._cancelAnimation();
             }
-            this._cancelAnimation = animate(innerContainer.style, easing, duration, true, () => {
+            this._cancelAnimation = animate(this._container.style, easing, duration, true, () => {
                 // When the animation completes, the popup is fully removed
                 this._remove();
-                delete this._removing;
             });
         } else {
             super.remove();
         }
 
         return this;
-    }
-
-    setLngLat(...args) {
-        return this._call('setLngLat', ...args);
-    }
-
-    trackPointer(...args) {
-        return this._call('trackPointer', ...args);
-    }
-
-    getElement() {
-        // Return the internal container
-        return this._innerContainer;
-    }
-
-    getMaxWidth() {
-        // Return the maxWidth of the internal container
-        return this._innerContainer && this._innerContainer.style.maxWidth;
-    }
-
-    setDOMContent(...args) {
-        return this._call('setDOMContent', ...args);
-    }
-
-    addClassName(...args) {
-        return this._call('addClassName', ...args);
-    }
-
-    removeClassName(...args) {
-        return this._call('removeClassName', ...args);
-    }
-
-    toggleClassName(...args) {
-        return this._call('toggleClassName', ...args);
     }
 
     _update(...args) {
@@ -431,11 +366,10 @@ export default class AnimatedPopup extends mapboxgl.Popup {
             return;
         }
 
-        // Save the wrapper container and use the internal container
-        let wrapperContainer = this._container;
-        const innerContainer = this._container = this._innerContainer;
+        let wrapperContainer = this._wrapperContainer;
+        let innerContainer = this._container;
 
-        if (innerContainer) {
+        if (wrapperContainer) {
             const style = innerContainer.style;
             let maxWidthRead = false;
 
@@ -455,33 +389,33 @@ export default class AnimatedPopup extends mapboxgl.Popup {
 
         super._update(...args);
 
-        if (innerContainer) {
+        if (wrapperContainer) {
             // Revert to the original style
             delete innerContainer.style;
         } else {
             const {easing, duration} = this.options.openingAnimation;
 
-            // If a container was newly created, create it's wrapper container
-            wrapperContainer = document.createElement('div');
+            // If a container was newly created, create its wrapper container
+            wrapperContainer = this._wrapperContainer = document.createElement('div');
+            innerContainer = this._container;
+
             wrapperContainer.className = 'mapboxgl-popup-wrapper';
             wrapperContainer.style.position = 'absolute';
             wrapperContainer.style.willChange = 'transform';
             wrapperContainer.style.pointerEvents = 'none';
-            wrapperContainer.style.transform = this._container.style.transform;
-            this._container.style.position = 'relative';
-            this._container.style.transform = 'scale(0)';
-            this._map.getContainer().appendChild(wrapperContainer);
-            wrapperContainer.appendChild(this._container);
+            wrapperContainer.style.transform = innerContainer.style.transform;
 
-            this._cancelAnimation = animate(this._container.style, easing, duration);
+            innerContainer.style.position = 'relative';
+            innerContainer.style.transform = 'scale(0)';
+
+            this._map.getContainer().appendChild(wrapperContainer);
+            wrapperContainer.appendChild(innerContainer);
+
+            this._cancelAnimation = animate(innerContainer.style, easing, duration);
         }
 
-        // Restore the wrapper container
-        this._innerContainer = this._container;
-        this._container = wrapperContainer;
-
         // Set the transform-origin property based on the anchor position
-        this._innerContainer.style.transformOrigin = getOriginFromClassList(this._innerContainer.classList);
+        this._container.style.transformOrigin = getOriginFromClassList(this._container.classList);
     }
 
 }
