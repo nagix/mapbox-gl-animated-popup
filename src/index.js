@@ -234,7 +234,7 @@ const transforms = {
     opacity: (style, value, reverse) => {
         style.opacity = reverse ? 1 - value : value;
     }
-}
+};
 
 function animate(style, ease, duration, reverse, complete, transform) {
     let cancel;
