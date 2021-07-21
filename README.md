@@ -32,11 +32,13 @@ Mapbox GL JS Animated Popup requires [Mapbox GL JS](https://github.com/mapbox/ma
 var popup = new AnimatedPopup({
     openingAnimation: {
         duration: 1000,
-        easing: 'easeOutElastic'
+        easing: 'easeOutElastic',
+        transform: 'scale'
     },
     closingAnimation: {
         duration: 300,
-        easing: 'easeInBack'
+        easing: 'easeInBack',
+        transform: 'opacity'
     }
 }).setLngLat([-96, 37.8]).setHTML('Hello World!').addTo(map);
 ```
@@ -62,9 +64,11 @@ In addition to the constructor options supported by [`Popup`](https://docs.mapbo
 | **`options.openingAnimation`** | `object` | | Options controlling the opening animation.
 | **`options.openingAnimation.duration`** | `number` | `1000` | The animation's duration, measured in milliseconds.
 | **`options.openingAnimation.easing`** | `string` | `'easeOutElastic'` | The easing function name of the animation. See [https://easings.net](https://easings.net)
+| **`options.openingAnimation.transform`** | `string | function` | `'scale'` | The transformation function to apply to the style.
 | **`options.closingAnimation`** | `object` | | Options controlling the closing animation.
 | **`options.closingAnimation.duration`** | `number` | `300` | The animation's duration, measured in milliseconds.
 | **`options.closingAnimation.easing`** | `string` | `'easeInBack'` | The easing function name of the animation. See [https://easings.net](https://easings.net)
+| **`options.openingAnimation.transform`** | `string | function` | `'scale'` | The transformation function to apply to the style.
 
 ## Building
 

@@ -227,9 +227,20 @@ const effects = {
     }
 };
 
-function animate(style, ease, duration, reverse, complete) {
+const transforms = {
+    scale: (style, value, reverse) => {
+        style.transform = `scale(${reverse ? 1 - value : value})`;
+    },
+    opacity: (style, value, reverse) => {
+        style.opacity = reverse ? 1 - value : value;
+    }
+};
+
+function animate(style, ease, duration, reverse, complete, transform) {
     let cancel;
+    const applyTransform = typeof transform === 'string' ? (transforms[transform] || transforms.scale) : transform;
     const start = performance.now();
+
     const repeat = () => {
         if (cancel) {
             return;
@@ -239,7 +250,7 @@ function animate(style, ease, duration, reverse, complete) {
         const t = duration === 0 ? 1 : Math.min(elapsed / duration, 1);
         const value = effects[ease](t);
 
-        style.transform = `scale(${reverse ? 1 - value : value})`;
+        applyTransform(style, value, reverse);
 
         if (t < 1) {
             requestAnimationFrame(repeat);
@@ -284,13 +295,15 @@ function getOriginFromClassList(classList) {
 
 const defaultOptions = {
     openingAnimation: {
+        transform: 'scale',
         duration: 1000,
         easing: 'easeOutElastic'
     },
     closingAnimation: {
+        transform: 'scale',
         duration: 300,
         easing: 'easeInBack'
-    }
+    },
 };
 
 /**
@@ -343,7 +356,7 @@ export default class AnimatedPopup extends Popup {
 
     remove() {
         if (this._wrapperContainer) {
-            const {easing, duration} = this.options.closingAnimation;
+            const {easing, duration, transform} = this.options.closingAnimation;
 
             if (this._cancelAnimation) {
                 this._cancelAnimation();
@@ -351,7 +364,7 @@ export default class AnimatedPopup extends Popup {
             this._cancelAnimation = animate(this._container.style, easing, duration, true, () => {
                 // When the animation completes, the popup is fully removed
                 this._remove();
-            });
+            }, transform);
         } else {
             super.remove();
         }
@@ -376,7 +389,7 @@ export default class AnimatedPopup extends Popup {
             configurable: true,
             get: () => innerContainer,
             set: container => {
-                const {easing, duration} = this.options.openingAnimation;
+                const {easing, duration, transform} = this.options.openingAnimation;
 
                 wrapperContainer = this._wrapperContainer = document.createElement('div');
                 wrapperContainer.className = 'mapboxgl-popup-wrapper';
@@ -390,7 +403,7 @@ export default class AnimatedPopup extends Popup {
                 this._map.getContainer().appendChild(wrapperContainer);
                 wrapperContainer.appendChild(innerContainer);
 
-                this._cancelAnimation = animate(innerContainer.style, easing, duration);
+                this._cancelAnimation = animate(innerContainer.style, easing, duration, false, null, transform);
             }
         });
 
