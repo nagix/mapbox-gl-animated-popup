@@ -9,12 +9,12 @@
       gtag('config', 'UA-39988758-2');
     </script>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/css/bootstrap-select.min.css">
     <link rel="stylesheet" href="/css/octicons.css">
     <link rel="stylesheet" href="/css/font-awesome.min.css">
     <link rel="stylesheet" href="/css/style.css" type="text/css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mapbox-gl@2.3.1/dist/mapbox-gl.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mapbox-gl@2.8.2/dist/mapbox-gl.css" />
     <title>Mapbox GL JS Animated Popup</title>
     <meta name="description" content="An animated popup component for Mapbox GL JS" />
     <meta property="og:title" content="Mapbox GL JS Animated Popup" />
@@ -28,10 +28,10 @@
     <meta name="twitter:site" content="@nagix" />
     <meta name="theme-color" content="#ffffff">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.18/dist/js/bootstrap-select.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl@2.3.1/dist/mapbox-gl.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl-animated-popup@0.2.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl@2.8.2/dist/mapbox-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mapbox-gl-animated-popup@0.3.0"></script>
     <style>
       #map-title {
         width: 840px;
@@ -162,6 +162,13 @@
                 <label class="col-form-label col-4" for="opening-animation-duration">duration</label>
                 <input id="opening-animation-duration" class="col-8 form-control" type="text" value="1000">
               </div>
+              <div class="form-group row">
+                <label class="col-form-label col-4" for="opening-animation-transform">transform</label>
+                <select id="opening-animation-transform" class="col-8 form-control custom-select">
+                  <option value="scale" selected>scale</option>
+                  <option value="opacity">opacity</option>
+                </select>
+              </div>
             </div>
             <div class="col-6">
               <div class="row">
@@ -177,6 +184,13 @@
                 <label class="col-form-label col-4" for="closing-animation-duration">duration</label>
                 <input id="closing-animation-duration" class="col-8 form-control" type="text" value="300">
               </div>
+              <div class="form-group row">
+                <label class="col-form-label col-4" for="closing-animation-transform">transform</label>
+                <select id="closing-animation-transform" class="col-8 form-control custom-select">
+                  <option value="scale" selected>scale</option>
+                  <option value="opacity">opacity</option>
+                </select>
+              </div>
             </div>
           </div>
           <div id="map-body"></div>
@@ -189,9 +203,9 @@
               &lt;meta charset="utf-8" /&gt;<br>
               &lt;title&gt;Attach a popup to a marker instance&lt;/title&gt;<br>
               &lt;meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" /&gt;<br>
-              &lt;script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"&gt;&lt;/script&gt;<br>
-              &lt;script src="https://cdn.jsdelivr.net/npm/mapbox-gl-animated-popup@v0.2.1/dist/mapbox-gl-animated-popup.min.js"&gt;&lt;/script&gt;<br>
-              &lt;link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet" /&gt;<br>
+              &lt;script src="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js"&gt;&lt;/script&gt;<br>
+              &lt;script src="https://cdn.jsdelivr.net/npm/mapbox-gl-animated-popup@v0.3.0/dist/mapbox-gl-animated-popup.min.js"&gt;&lt;/script&gt;<br>
+              &lt;link href="https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css" rel="stylesheet" /&gt;<br>
               &lt;style&gt;<br>
               &nbsp;&nbsp;body { margin: 0; padding: 0; }<br>
               &nbsp;&nbsp;#map { position: absolute; top: 0; bottom: 0; width: 100%; }<br>
@@ -230,11 +244,13 @@
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;offset: 25,<br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;openingAnimation: {<br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;duration: <span id="opening-animation-duration-text">1000</span>,<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easing: '<span id="opening-animation-easing-text">easeOutElastic</span>'<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easing: '<span id="opening-animation-easing-text">easeOutElastic</span>',<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transform: '<span id="opening-animation-transform-text">scale</span>'<br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;closingAnimation: {<br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;duration: <span id="closing-animation-duration-text">300</span>,<br>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easing: '<span id="closing-animation-easing-text">easeInBack</span>'<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;easing: '<span id="closing-animation-easing-text">easeInBack</span>',<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transform: '<span id="closing-animation-transform-text">scale</span>'<br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
               &nbsp;&nbsp;&nbsp;&nbsp;}).setText(<br>
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'Construction on the Washington Monument began in 1848.'<br>
@@ -340,12 +356,16 @@
       let popup;
       let openingAnimationDuration = 1000;
       let openingAnimationEasing = 'easeOutElastic';
+      let openingAnimationTransform = 'scale';
       let closingAnimationDuration = 300;
       let closingAnimationEasing = 'easeInBack';
+      let closingAnimationTransform = 'scale';
       const openingAnimationDurationElement = document.getElementById('opening-animation-duration');
       const openingAnimationEasingElement = document.getElementById('opening-animation-easing');
+      const openingAnimationTransformElement = document.getElementById('opening-animation-transform');
       const closingAnimationDurationElement = document.getElementById('closing-animation-duration');
       const closingAnimationEasingElement = document.getElementById('closing-animation-easing');
+      const closingAnimationTransformElement = document.getElementById('closing-animation-transform');
       for (const name of Object.keys(easingFunctions)) {
         let element = document.createElement('option');
         element.value = element.text = name;
@@ -370,11 +390,13 @@
           offset: 25,
           openingAnimation: {
             duration: openingAnimationDuration,
-            easing: openingAnimationEasing
+            easing: openingAnimationEasing,
+            transform: openingAnimationTransform
           },
           closingAnimation: {
             duration: closingAnimationDuration,
-            easing: closingAnimationEasing
+            easing: closingAnimationEasing,
+            transform: closingAnimationTransform
           }
         }).setText('Construction on the Washington Monument began in 1848.');
         const element = document.createElement('div');
@@ -394,6 +416,11 @@
         document.getElementById('opening-animation-easing-text').innerHTML = openingAnimationEasing;
         refresh();
       });
+      openingAnimationTransformElement.addEventListener('change', () => {
+        openingAnimationTransform = openingAnimationTransformElement.value;
+        document.getElementById('opening-animation-transform-text').innerHTML = openingAnimationTransform;
+        refresh();
+      });
       closingAnimationDurationElement.addEventListener('input', () => {
         closingAnimationDuration = +closingAnimationDurationElement.value || 0;
         document.getElementById('closing-animation-duration-text').innerHTML = closingAnimationDuration;
@@ -402,6 +429,11 @@
       closingAnimationEasingElement.addEventListener('change', () => {
         closingAnimationEasing = closingAnimationEasingElement.value;
         document.getElementById('closing-animation-easing-text').innerHTML = closingAnimationEasing;
+        refresh();
+      });
+      closingAnimationTransformElement.addEventListener('change', () => {
+        closingAnimationTransform = closingAnimationTransformElement.value;
+        document.getElementById('closing-animation-transform-text').innerHTML = closingAnimationTransform;
         refresh();
       });
 
@@ -424,7 +456,7 @@
         <img src="/favicon-32x32-glay.png" style="position: absolute; top: 34px; left: 50%; margin-left: -16px;">
       </a>
       <ul class="site-footer-links">
-        <li>&copy; 2020-2021 Akihiko Kusanagi</li>
+        <li>&copy; 2020-2022 Akihiko Kusanagi</li>
       </ul>
     </footer>
   </body>

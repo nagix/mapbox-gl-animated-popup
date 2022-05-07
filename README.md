@@ -4,7 +4,7 @@
 
 ![Screenshot](https://nagix.github.io/mapbox-gl-animated-popup/mapbox-gl-animated-popup.gif)
 
-Version 0.2 requires Mapbox GL JS 0.48.0 or later. This component works on [browsers that support ES6](https://caniuse.com/es6).
+Version 0.3 requires Mapbox GL JS 0.48.0 or later. This component works on [browsers that support ES6](https://caniuse.com/es6).
 
 ## Installation
 
@@ -38,7 +38,7 @@ var popup = new AnimatedPopup({
     closingAnimation: {
         duration: 300,
         easing: 'easeInBack',
-        transform: 'opacity'
+        transform: 'scale'
     }
 }).setLngLat([-96, 37.8]).setHTML('Hello World!').addTo(map);
 ```
@@ -64,11 +64,32 @@ In addition to the constructor options supported by [`Popup`](https://docs.mapbo
 | **`options.openingAnimation`** | `object` | | Options controlling the opening animation.
 | **`options.openingAnimation.duration`** | `number` | `1000` | The animation's duration, measured in milliseconds.
 | **`options.openingAnimation.easing`** | `string` | `'easeOutElastic'` | The easing function name of the animation. See [https://easings.net](https://easings.net)
-| **`options.openingAnimation.transform`** | `string | function` | `'scale'` | The transformation function to apply to the style.
+| **`options.openingAnimation.transform`** | <code>string &#124; function</code> | `'scale'` | The transformation function to apply to the style. [more...](#transformation-function)
 | **`options.closingAnimation`** | `object` | | Options controlling the closing animation.
 | **`options.closingAnimation.duration`** | `number` | `300` | The animation's duration, measured in milliseconds.
 | **`options.closingAnimation.easing`** | `string` | `'easeInBack'` | The easing function name of the animation. See [https://easings.net](https://easings.net)
-| **`options.openingAnimation.transform`** | `string | function` | `'scale'` | The transformation function to apply to the style.
+| **`options.openingAnimation.transform`** | <code>string &#124; function</code> | `'scale'` | The transformation function to apply to the style. [more...](#transformation-function)
+
+### Transformation Function
+
+This function is used to customize how the style properties are transitioned. The function receives 3 arguments:
+
+- `style`: the [HTMLElement.style](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/style) object of the popup container
+- `value`: the value after the easing function is applied (between 0 and 1)
+- `reverse`: If true, time is reversed (the popup is closing)
+
+The following strings for the pre-defined functions can also be specified:
+
+- `'scale'` (default)
+- `'opacity'`
+
+For example, the `'scale'` function is implemented as follows:
+
+```js
+function(style, value, reverse) {
+    style.transform = `scale(${reverse ? 1 - value : value})`;
+}
+```
 
 ## Building
 
