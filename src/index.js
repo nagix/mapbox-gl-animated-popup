@@ -420,7 +420,7 @@ export default class AnimatedPopup extends Popup {
                     innerContainer.style.transform = transform;
 
                     // Set the transform-origin property based on the anchor position
-                    innerContainer.style.transformOrigin = getOriginFromClassList(innerContainer.classList);
+                    innerContainer.style.transformOrigin = this._anchor ? this._anchor.replace('-', ' ') : getOriginFromClassList(innerContainer.classList);
                 });
             };
         } else {
