@@ -1,4 +1,6 @@
-import {Popup, version as mapboxVersion} from 'mapbox-gl';
+import {Popup, version} from 'mapbox-gl';
+
+const mapboxVersion = version.split('.').map(x => +x);
 
 const effects = {
     linear(t) {
@@ -407,7 +409,7 @@ export default class AnimatedPopup extends Popup {
             }
         });
 
-        if (mapboxVersion >= '2.3') {
+        if (mapboxVersion[0] >= 2 && mapboxVersion[1] >= 3 || mapboxVersion[0] >= 3) {
             // Extend _requestDomTask to handle transform changes
             this._map._requestDomTask = fn => {
                 _requestDomTask.call(this._map, () => {
@@ -432,7 +434,7 @@ export default class AnimatedPopup extends Popup {
         delete this._container;
         this._container = innerContainer;
 
-        if (mapboxVersion >= '2.3') {
+        if (mapboxVersion[0] >= 2 && mapboxVersion[1] >= 3 || mapboxVersion[0] >= 3) {
             // Revert _requestDomTask
             this._map._requestDomTask = _requestDomTask;
         } else {
